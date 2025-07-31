@@ -13,7 +13,7 @@ import {
   Grid,
   Chip,
   Divider,
-  Alert
+  Alert,
 } from '@mui/material';
 import { PlayArrow, Refresh, TrendingUp } from '@mui/icons-material';
 import type { TargetStats, OptimizationCriteria, OptimizationResult } from '@/types/stadium';
@@ -36,20 +36,20 @@ interface StatSliderProps {
   max?: number;
 }
 
-const StatSlider = ({ 
-  label, 
-  value, 
-  priority, 
-  onChange, 
-  onPriorityChange, 
+const StatSlider = ({
+  label,
+  value,
+  priority,
+  onChange,
+  onPriorityChange,
   unit = '%',
   min = 0,
-  max = 100
+  max = 100,
 }: StatSliderProps) => {
   const priorityColors = {
     high: 'error',
-    medium: 'warning', 
-    low: 'info'
+    medium: 'warning',
+    low: 'info',
   } as const;
 
   return (
@@ -58,14 +58,14 @@ const StatSlider = ({
         <Typography variant="subtitle2" color="text.primary">
           {label}
         </Typography>
-        <Chip 
-          label={priority.toUpperCase()} 
+        <Chip
+          label={priority.toUpperCase()}
           color={priorityColors[priority]}
           size="small"
           variant="outlined"
         />
       </Box>
-      
+
       <Slider
         value={value}
         onChange={(_, newValue) => onChange(newValue as number)}
@@ -73,61 +73,75 @@ const StatSlider = ({
         max={max}
         step={1}
         valueLabelDisplay="on"
-        valueLabelFormat={(val) => `${val}${unit}`}
+        valueLabelFormat={val => `${val}${unit}`}
         sx={{
           mb: 1,
           '& .MuiSlider-thumb': {
-            backgroundColor: priority === 'high' ? '#f44336' : 
-                            priority === 'medium' ? '#ff9800' : '#2196f3'
+            backgroundColor:
+              priority === 'high' ? '#f44336' : priority === 'medium' ? '#ff9800' : '#2196f3',
           },
           '& .MuiSlider-track': {
-            backgroundColor: priority === 'high' ? '#f44336' : 
-                            priority === 'medium' ? '#ff9800' : '#2196f3'
-          }
+            backgroundColor:
+              priority === 'high' ? '#f44336' : priority === 'medium' ? '#ff9800' : '#2196f3',
+          },
         }}
       />
-      
+
       <FormControl component="fieldset" size="small">
         <RadioGroup
           row
           value={priority}
-          onChange={(e) => onPriorityChange(e.target.value as 'low' | 'medium' | 'high')}
+          onChange={e => onPriorityChange(e.target.value as 'low' | 'medium' | 'high')}
         >
-          <FormControlLabel 
-            value="low" 
-            control={<Radio size="small" />} 
-            label="Low" 
+          <FormControlLabel
+            value="low"
+            control={<Radio size="small" />}
+            label="Low"
             sx={{ mr: 2 }}
           />
-          <FormControlLabel 
-            value="medium" 
-            control={<Radio size="small" />} 
-            label="Medium" 
+          <FormControlLabel
+            value="medium"
+            control={<Radio size="small" />}
+            label="Medium"
             sx={{ mr: 2 }}
           />
-          <FormControlLabel 
-            value="high" 
-            control={<Radio size="small" />} 
-            label="High" 
-          />
+          <FormControlLabel value="high" control={<Radio size="small" />} label="High" />
         </RadioGroup>
       </FormControl>
     </Box>
   );
 };
 
-export default function OptimizationForm({ onOptimizationResult, isOptimizing = false }: OptimizationFormProps) {
+export default function OptimizationForm({
+  onOptimizationResult,
+  isOptimizing = false,
+}: OptimizationFormProps) {
   // Budget state
   const [budget, setBudget] = useState(50000);
   const [maxItems, setMaxItems] = useState(6);
-  
+
   // Target stats state
-  const [weaponPower, setWeaponPower] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({ value: 20, priority: 'medium' });
-  const [abilityPower, setAbilityPower] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({ value: 15, priority: 'medium' });
-  const [attackSpeed, setAttackSpeed] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({ value: 10, priority: 'low' });
-  const [health, setHealth] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({ value: 50, priority: 'low' });
-  const [cooldownReduction, setCooldownReduction] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({ value: 8, priority: 'low' });
-  
+  const [weaponPower, setWeaponPower] = useState<{
+    value: number;
+    priority: 'low' | 'medium' | 'high';
+  }>({ value: 20, priority: 'medium' });
+  const [abilityPower, setAbilityPower] = useState<{
+    value: number;
+    priority: 'low' | 'medium' | 'high';
+  }>({ value: 15, priority: 'medium' });
+  const [attackSpeed, setAttackSpeed] = useState<{
+    value: number;
+    priority: 'low' | 'medium' | 'high';
+  }>({ value: 10, priority: 'low' });
+  const [health, setHealth] = useState<{ value: number; priority: 'low' | 'medium' | 'high' }>({
+    value: 50,
+    priority: 'low',
+  });
+  const [cooldownReduction, setCooldownReduction] = useState<{
+    value: number;
+    priority: 'low' | 'medium' | 'high';
+  }>({ value: 8, priority: 'low' });
+
   // UI state
   const [lastOptimizationTime, setLastOptimizationTime] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -139,22 +153,22 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
       abilityPower: { value: 10, priority: 'low' as 'low' | 'medium' | 'high' },
       attackSpeed: { value: 25, priority: 'high' as 'low' | 'medium' | 'high' },
       health: { value: 30, priority: 'medium' as 'low' | 'medium' | 'high' },
-      cooldownReduction: { value: 5, priority: 'low' as 'low' | 'medium' | 'high' }
+      cooldownReduction: { value: 5, priority: 'low' as 'low' | 'medium' | 'high' },
     },
     tank: {
       weaponPower: { value: 10, priority: 'low' as 'low' | 'medium' | 'high' },
       abilityPower: { value: 20, priority: 'medium' as 'low' | 'medium' | 'high' },
       attackSpeed: { value: 5, priority: 'low' as 'low' | 'medium' | 'high' },
       health: { value: 80, priority: 'high' as 'low' | 'medium' | 'high' },
-      cooldownReduction: { value: 15, priority: 'high' as 'low' | 'medium' | 'high' }
+      cooldownReduction: { value: 15, priority: 'high' as 'low' | 'medium' | 'high' },
     },
     support: {
       weaponPower: { value: 8, priority: 'low' as 'low' | 'medium' | 'high' },
       abilityPower: { value: 30, priority: 'high' as 'low' | 'medium' | 'high' },
       attackSpeed: { value: 8, priority: 'low' as 'low' | 'medium' | 'high' },
       health: { value: 40, priority: 'medium' as 'low' | 'medium' | 'high' },
-      cooldownReduction: { value: 20, priority: 'high' as 'low' | 'medium' | 'high' }
-    }
+      cooldownReduction: { value: 20, priority: 'high' as 'low' | 'medium' | 'high' },
+    },
   };
 
   const applyPreset = (presetName: keyof typeof presets) => {
@@ -166,17 +180,27 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
     setCooldownReduction(preset.cooldownReduction);
   };
 
-  const buildTargetStats = (): TargetStats => ({
-    weaponPower: weaponPower.value > 0 ? { target: weaponPower.value, priority: weaponPower.priority } : undefined,
-    abilityPower: abilityPower.value > 0 ? { target: abilityPower.value, priority: abilityPower.priority } : undefined,
-    attackSpeed: attackSpeed.value > 0 ? { target: attackSpeed.value, priority: attackSpeed.priority } : undefined,
-    health: health.value > 0 ? { target: health.value, priority: health.priority } : undefined,
-    cooldownReduction: cooldownReduction.value > 0 ? { target: cooldownReduction.value, priority: cooldownReduction.priority } : undefined,
-  });
-
   const handleOptimize = useCallback(() => {
-    const targetStats = buildTargetStats();
-    
+    const targetStats: TargetStats = {
+      weaponPower:
+        weaponPower.value > 0
+          ? { target: weaponPower.value, priority: weaponPower.priority }
+          : undefined,
+      abilityPower:
+        abilityPower.value > 0
+          ? { target: abilityPower.value, priority: abilityPower.priority }
+          : undefined,
+      attackSpeed:
+        attackSpeed.value > 0
+          ? { target: attackSpeed.value, priority: attackSpeed.priority }
+          : undefined,
+      health: health.value > 0 ? { target: health.value, priority: health.priority } : undefined,
+      cooldownReduction:
+        cooldownReduction.value > 0
+          ? { target: cooldownReduction.value, priority: cooldownReduction.priority }
+          : undefined,
+    };
+
     // Validate that at least one stat is set
     const hasValidStats = Object.values(targetStats).some(stat => stat && stat.target > 0);
     if (!hasValidStats) {
@@ -185,23 +209,37 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
     }
 
     setError(null);
-    
+
     const criteria: OptimizationCriteria = {
       maxBudget: budget,
       maxItems,
       targetStats,
-      prioritizeEfficiency: true
+      prioritizeEfficiency: true,
     };
 
-    optimizeItemBuildDebounced(criteria, (result) => {
-      setLastOptimizationTime(Date.now());
-      onOptimizationResult(result);
-    }, 300);
-  }, [budget, maxItems, weaponPower, abilityPower, attackSpeed, health, cooldownReduction, onOptimizationResult]);
+    optimizeItemBuildDebounced(
+      criteria,
+      result => {
+        setLastOptimizationTime(Date.now());
+        onOptimizationResult(result);
+      },
+      300
+    );
+  }, [
+    budget,
+    maxItems,
+    weaponPower,
+    abilityPower,
+    attackSpeed,
+    health,
+    cooldownReduction,
+    onOptimizationResult,
+  ]);
 
   // Auto-optimize when parameters change (debounced)
   const handleAutoOptimize = useCallback(() => {
-    if (lastOptimizationTime > 0) { // Only auto-optimize if user has manually optimized at least once
+    if (lastOptimizationTime > 0) {
+      // Only auto-optimize if user has manually optimized at least once
       handleOptimize();
     }
   }, [handleOptimize, lastOptimizationTime]);
@@ -226,11 +264,9 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
             <Typography variant="h6" gutterBottom>
               Budget Settings
             </Typography>
-            
+
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <FormLabel sx={{ mb: 1 }}>
-                Stadium Cash Budget: {formatCurrency(budget)} SC
-              </FormLabel>
+              <FormLabel sx={{ mb: 1 }}>Stadium Cash Budget: {formatCurrency(budget)} SC</FormLabel>
               <Slider
                 value={budget}
                 onChange={(_, value) => setBudget(value as number)}
@@ -243,16 +279,14 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
                   { value: 25000, label: '25K' },
                   { value: 50000, label: '50K' },
                   { value: 75000, label: '75K' },
-                  { value: 100000, label: '100K' }
+                  { value: 100000, label: '100K' },
                 ]}
-                valueLabelFormat={(value) => `${formatCurrency(value)} SC`}
+                valueLabelFormat={value => `${formatCurrency(value)} SC`}
               />
             </FormControl>
 
             <FormControl fullWidth>
-              <FormLabel sx={{ mb: 1 }}>
-                Maximum Items: {maxItems}
-              </FormLabel>
+              <FormLabel sx={{ mb: 1 }}>Maximum Items: {maxItems}</FormLabel>
               <Slider
                 value={maxItems}
                 onChange={(_, value) => setMaxItems(value as number)}
@@ -270,30 +304,28 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
         <Grid item xs={12} md={8}>
           <Paper variant="outlined" sx={{ p: 2 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h6">
-                Target Stats & Priority
-              </Typography>
-              
+              <Typography variant="h6">Target Stats & Priority</Typography>
+
               <Box display="flex" gap={1}>
-                <Button 
-                  size="small" 
-                  variant="outlined" 
+                <Button
+                  size="small"
+                  variant="outlined"
                   onClick={() => applyPreset('dps')}
                   color="error"
                 >
                   DPS Focus
                 </Button>
-                <Button 
-                  size="small" 
-                  variant="outlined" 
+                <Button
+                  size="small"
+                  variant="outlined"
                   onClick={() => applyPreset('tank')}
                   color="info"
                 >
                   Tank Focus
                 </Button>
-                <Button 
-                  size="small" 
-                  variant="outlined" 
+                <Button
+                  size="small"
+                  variant="outlined"
                   onClick={() => applyPreset('support')}
                   color="success"
                 >
@@ -308,62 +340,62 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
                   label="Weapon Power"
                   value={weaponPower.value}
                   priority={weaponPower.priority}
-                  onChange={(value) => {
+                  onChange={value => {
                     setWeaponPower({ ...weaponPower, value });
                     handleAutoOptimize();
                   }}
-                  onPriorityChange={(priority) => {
+                  onPriorityChange={priority => {
                     setWeaponPower({ ...weaponPower, priority });
                     handleAutoOptimize();
                   }}
                   max={50}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <StatSlider
                   label="Ability Power"
                   value={abilityPower.value}
                   priority={abilityPower.priority}
-                  onChange={(value) => {
+                  onChange={value => {
                     setAbilityPower({ ...abilityPower, value });
                     handleAutoOptimize();
                   }}
-                  onPriorityChange={(priority) => {
+                  onPriorityChange={priority => {
                     setAbilityPower({ ...abilityPower, priority });
                     handleAutoOptimize();
                   }}
                   max={50}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <StatSlider
                   label="Attack Speed"
                   value={attackSpeed.value}
                   priority={attackSpeed.priority}
-                  onChange={(value) => {
+                  onChange={value => {
                     setAttackSpeed({ ...attackSpeed, value });
                     handleAutoOptimize();
                   }}
-                  onPriorityChange={(priority) => {
+                  onPriorityChange={priority => {
                     setAttackSpeed({ ...attackSpeed, priority });
                     handleAutoOptimize();
                   }}
                   max={30}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <StatSlider
                   label="Health"
                   value={health.value}
                   priority={health.priority}
-                  onChange={(value) => {
+                  onChange={value => {
                     setHealth({ ...health, value });
                     handleAutoOptimize();
                   }}
-                  onPriorityChange={(priority) => {
+                  onPriorityChange={priority => {
                     setHealth({ ...health, priority });
                     handleAutoOptimize();
                   }}
@@ -371,17 +403,17 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
                   max={150}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <StatSlider
                   label="Cooldown Reduction"
                   value={cooldownReduction.value}
                   priority={cooldownReduction.priority}
-                  onChange={(value) => {
+                  onChange={value => {
                     setCooldownReduction({ ...cooldownReduction, value });
                     handleAutoOptimize();
                   }}
-                  onPriorityChange={(priority) => {
+                  onPriorityChange={priority => {
                     setCooldownReduction({ ...cooldownReduction, priority });
                     handleAutoOptimize();
                   }}
@@ -407,7 +439,7 @@ export default function OptimizationForm({ onOptimizationResult, isOptimizing = 
         >
           {isOptimizing ? 'Optimizing...' : 'Optimize Build'}
         </Button>
-        
+
         <Button
           variant="outlined"
           size="large"

@@ -31,16 +31,16 @@ export function saveBuild(build: PlayerBuild, name?: string, tags: string[] = []
     isFavorite: false,
     tags,
   };
-  
+
   const savedBuilds = getSavedBuilds();
   const existingIndex = savedBuilds.findIndex(b => b.id === build.id);
-  
+
   if (existingIndex >= 0) {
     savedBuilds[existingIndex] = savedBuild;
   } else {
     savedBuilds.push(savedBuild);
   }
-  
+
   localStorage.setItem(STORAGE_KEYS.BUILDS, JSON.stringify(savedBuilds));
   return savedBuild;
 }
@@ -49,7 +49,7 @@ export function getSavedBuilds(): SavedBuild[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.BUILDS);
     if (!stored) return [];
-    
+
     const builds = JSON.parse(stored) as SavedBuild[];
     return builds.map(build => ({
       ...build,
@@ -74,11 +74,11 @@ export function deleteSavedBuild(buildId: string): boolean {
   try {
     const builds = getSavedBuilds();
     const filteredBuilds = builds.filter(build => build.id !== buildId);
-    
+
     if (filteredBuilds.length === builds.length) {
       return false; // Build not found
     }
-    
+
     localStorage.setItem(STORAGE_KEYS.BUILDS, JSON.stringify(filteredBuilds));
     return true;
   } catch (error) {
@@ -91,9 +91,9 @@ export function toggleBuildFavorite(buildId: string): boolean {
   try {
     const builds = getSavedBuilds();
     const build = builds.find(b => b.id === buildId);
-    
+
     if (!build) return false;
-    
+
     build.isFavorite = !build.isFavorite;
     localStorage.setItem(STORAGE_KEYS.BUILDS, JSON.stringify(builds));
     return true;
@@ -107,9 +107,9 @@ export function updateBuildTags(buildId: string, tags: string[]): boolean {
   try {
     const builds = getSavedBuilds();
     const build = builds.find(b => b.id === buildId);
-    
+
     if (!build) return false;
-    
+
     build.tags = tags;
     localStorage.setItem(STORAGE_KEYS.BUILDS, JSON.stringify(builds));
     return true;
@@ -132,7 +132,7 @@ export function getCurrentBuild(): PlayerBuild | null {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_BUILD);
     if (!stored) return null;
-    
+
     const build = JSON.parse(stored) as PlayerBuild;
     return {
       ...build,
@@ -168,7 +168,7 @@ export function getUserPreferences(): UserPreferences {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.USER_PREFERENCES);
     if (!stored) return DEFAULT_PREFERENCES;
-    
+
     const preferences = JSON.parse(stored) as UserPreferences;
     return { ...DEFAULT_PREFERENCES, ...preferences };
   } catch (error) {
@@ -188,19 +188,23 @@ export function exportBuilds(): string {
   return JSON.stringify(exportData, null, 2);
 }
 
-export function importBuilds(jsonData: string): { success: boolean; imported: number; errors: string[] } {
+export function importBuilds(jsonData: string): {
+  success: boolean;
+  imported: number;
+  errors: string[];
+} {
   try {
     const data = JSON.parse(jsonData);
     const errors: string[] = [];
     let imported = 0;
-    
+
     if (!data.builds || !Array.isArray(data.builds)) {
       return { success: false, imported: 0, errors: ['Invalid export format'] };
     }
-    
+
     const currentBuilds = getSavedBuilds();
     const currentIds = new Set(currentBuilds.map(b => b.id));
-    
+
     for (const buildData of data.builds) {
       try {
         // Validate build structure
@@ -208,13 +212,13 @@ export function importBuilds(jsonData: string): { success: boolean; imported: nu
           errors.push(`Invalid build structure for build: ${buildData.name || 'unknown'}`);
           continue;
         }
-        
+
         // Skip if already exists
         if (currentIds.has(buildData.id)) {
           errors.push(`Build already exists: ${buildData.name}`);
           continue;
         }
-        
+
         // Convert dates
         const build: SavedBuild = {
           ...buildData,
@@ -224,18 +228,18 @@ export function importBuilds(jsonData: string): { success: boolean; imported: nu
             updatedAt: new Date(buildData.build.updatedAt),
           },
         };
-        
+
         currentBuilds.push(build);
         imported++;
       } catch (error) {
         errors.push(`Error importing build ${buildData.name}: ${error}`);
       }
     }
-    
+
     if (imported > 0) {
       localStorage.setItem(STORAGE_KEYS.BUILDS, JSON.stringify(currentBuilds));
     }
-    
+
     return { success: imported > 0, imported, errors };
   } catch (error) {
     return { success: false, imported: 0, errors: [`Invalid JSON format: ${error}`] };
@@ -251,11 +255,11 @@ export function getStorageUsage(): { used: number; total: number; percentage: nu
         used += localStorage.getItem(key)?.length || 0;
       }
     }
-    
+
     // Estimate total available (5MB typical browser limit)
     const total = 5 * 1024 * 1024; // 5MB in characters
     const percentage = (used / total) * 100;
-    
+
     return { used, total, percentage };
   } catch (error) {
     console.error('Error calculating storage usage:', error);

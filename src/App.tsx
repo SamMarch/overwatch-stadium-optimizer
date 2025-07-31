@@ -21,7 +21,7 @@ function App() {
         </Layout>
       </Router>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

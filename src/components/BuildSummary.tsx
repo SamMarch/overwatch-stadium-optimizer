@@ -18,7 +18,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -27,16 +27,16 @@ import {
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
   Info as InfoIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
-import type { StadiumItem } from '@/types/stadium';
+import type { StadiumItem, StadiumStats } from '@/types/stadium';
 import ItemCard from './ItemCard';
-import { 
+import {
   formatCurrencyWithSymbol,
   formatStatsList,
   formatBuildSummary,
   getStatDisplayName,
-  formatStatValue
+  formatStatValue,
 } from '@/utils/formatting';
 import { validateBuild, calculateBuildStats, calculateTotalCost } from '@/utils/buildCalculations';
 
@@ -60,16 +60,16 @@ interface ItemSlotProps {
 const ItemSlot = ({ item, slotIndex, onRemove, isEmpty = false }: ItemSlotProps) => {
   if (isEmpty || !item) {
     return (
-      <Card 
-        variant="outlined" 
-        sx={{ 
+      <Card
+        variant="outlined"
+        sx={{
           minHeight: 120,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: 'action.hover',
           borderStyle: 'dashed',
-          borderColor: 'divider'
+          borderColor: 'divider',
         }}
       >
         <Box textAlign="center">
@@ -86,36 +86,30 @@ const ItemSlot = ({ item, slotIndex, onRemove, isEmpty = false }: ItemSlotProps)
 
   return (
     <Box position="relative">
-      <ItemCard 
-        item={item}
-        onRemove={onRemove}
-        isInBuild
-        compact
-        showRemoveButton
-      />
-      <Chip 
+      <ItemCard item={item} onRemove={onRemove} isInBuild compact showRemoveButton />
+      <Chip
         label={slotIndex + 1}
         size="small"
         color="primary"
-        sx={{ 
+        sx={{
           position: 'absolute',
           top: -8,
           left: -8,
-          zIndex: 1
+          zIndex: 1,
         }}
       />
     </Box>
   );
 };
 
-export default function BuildSummary({ 
-  currentBuild, 
-  budget, 
+export default function BuildSummary({
+  currentBuild,
+  budget,
   maxItems = 6,
   onRemoveItem,
   onClearBuild,
   onSaveBuild,
-  buildName = "Current Build"
+  buildName = 'Current Build',
 }: BuildSummaryProps) {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -128,9 +122,9 @@ export default function BuildSummary({
   const statsList = formatStatsList(currentStats);
 
   // Fill empty slots for visual representation
-  const buildSlots = [...currentBuild];
+  const buildSlots: (StadiumItem | undefined)[] = [...currentBuild];
   while (buildSlots.length < maxItems) {
-    buildSlots.push(undefined as any);
+    buildSlots.push(undefined);
   }
 
   const handleClearBuild = () => {
@@ -166,24 +160,18 @@ export default function BuildSummary({
         <Typography variant="h5" gutterBottom>
           {buildName}
         </Typography>
-        
+
         <Box display="flex" gap={1}>
           {onSaveBuild && currentBuild.length > 0 && (
             <Tooltip title="Save this build">
-              <IconButton 
-                color="primary"
-                onClick={() => setSaveDialogOpen(true)}
-              >
+              <IconButton color="primary" onClick={() => setSaveDialogOpen(true)}>
                 <SaveIcon />
               </IconButton>
             </Tooltip>
           )}
           {onClearBuild && currentBuild.length > 0 && (
             <Tooltip title="Clear all items">
-              <IconButton 
-                color="error"
-                onClick={() => setClearDialogOpen(true)}
-              >
+              <IconButton color="error" onClick={() => setClearDialogOpen(true)}>
                 <ClearIcon />
               </IconButton>
             </Tooltip>
@@ -205,7 +193,7 @@ export default function BuildSummary({
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={3}>
           <Card variant="outlined">
             <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
@@ -218,7 +206,7 @@ export default function BuildSummary({
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={3}>
           <Card variant="outlined">
             <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
@@ -231,7 +219,7 @@ export default function BuildSummary({
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={3}>
           <Card variant="outlined">
             <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
@@ -249,35 +237,33 @@ export default function BuildSummary({
       {/* Budget Progress Bar */}
       <Box sx={{ mb: 3 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-          <Typography variant="subtitle2">
-            Budget Usage
-          </Typography>
+          <Typography variant="subtitle2">Budget Usage</Typography>
           <Typography variant="body2" color="text.secondary">
             {formatBuildSummary(currentBuild.length, totalCost, budget)}
           </Typography>
         </Box>
-        <LinearProgress 
-          variant="determinate" 
+        <LinearProgress
+          variant="determinate"
           value={Math.min(budgetUsage, 100)}
-          sx={{ 
-            height: 10, 
+          sx={{
+            height: 10,
             borderRadius: 5,
             backgroundColor: 'action.hover',
             '& .MuiLinearProgress-bar': {
-              backgroundColor: budgetUsage > 100 ? 'error.main' : 
-                            budgetUsage > 80 ? 'warning.main' : 'success.main'
-            }
+              backgroundColor:
+                budgetUsage > 100
+                  ? 'error.main'
+                  : budgetUsage > 80
+                    ? 'warning.main'
+                    : 'success.main',
+            },
           }}
         />
       </Box>
 
       {/* Validation Status */}
       {(validation.errors.length > 0 || validation.warnings.length > 0) && (
-        <Alert 
-          severity={getValidationSeverity()}
-          icon={getValidationIcon()}
-          sx={{ mb: 3 }}
-        >
+        <Alert severity={getValidationSeverity()} icon={getValidationIcon()} sx={{ mb: 3 }}>
           <Box>
             {validation.errors.map((error, index) => (
               <Typography key={index} variant="body2">
@@ -301,12 +287,7 @@ export default function BuildSummary({
         <Grid container spacing={2}>
           {buildSlots.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
-              <ItemSlot 
-                item={item}
-                slotIndex={index}
-                onRemove={onRemoveItem}
-                isEmpty={!item}
-              />
+              <ItemSlot item={item} slotIndex={index} onRemove={onRemoveItem} isEmpty={!item} />
             </Grid>
           ))}
         </Grid>
@@ -322,9 +303,9 @@ export default function BuildSummary({
             {Object.entries(currentStats).map(([statKey, value]) => {
               if (!value || value === 0) return null;
               return (
-                <Chip 
+                <Chip
                   key={statKey}
-                  label={`${getStatDisplayName(statKey as any)}: ${formatStatValue(value, statKey as any)}`}
+                  label={`${getStatDisplayName(statKey as keyof StadiumStats)}: ${formatStatValue(value, statKey as keyof StadiumStats)}`}
                   color="primary"
                   variant="outlined"
                 />
@@ -342,7 +323,8 @@ export default function BuildSummary({
             No Items in Build
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Use the optimizer to find recommended items, or browse the item database to build manually.
+            Use the optimizer to find recommended items, or browse the item database to build
+            manually.
           </Typography>
         </Box>
       )}
@@ -352,16 +334,15 @@ export default function BuildSummary({
         <DialogTitle>Clear Build</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to clear all items from your current build? This action cannot be undone.
+            Are you sure you want to clear all items from your current build? This action cannot be
+            undone.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setClearDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleClearBuild} 
-            color="error" 
+          <Button onClick={() => setClearDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleClearBuild}
+            color="error"
             variant="contained"
             startIcon={<DeleteIcon />}
           >
@@ -375,7 +356,8 @@ export default function BuildSummary({
         <DialogTitle>Save Build</DialogTitle>
         <DialogContent>
           <Typography gutterBottom>
-            Save your current build for later use? You can load saved builds from the Inventory page.
+            Save your current build for later use? You can load saved builds from the Inventory
+            page.
           </Typography>
           <Box mt={2}>
             <Typography variant="subtitle2" gutterBottom>
@@ -383,33 +365,25 @@ export default function BuildSummary({
             </Typography>
             <List dense>
               <ListItem>
-                <ListItemText 
-                  primary="Items" 
-                  secondary={`${currentBuild.length} items`}
-                />
+                <ListItemText primary="Items" secondary={`${currentBuild.length} items`} />
               </ListItem>
               <ListItem>
-                <ListItemText 
-                  primary="Total Cost" 
+                <ListItemText
+                  primary="Total Cost"
                   secondary={formatCurrencyWithSymbol(totalCost)}
                 />
               </ListItem>
               <ListItem>
-                <ListItemText 
-                  primary="Budget Usage" 
-                  secondary={`${budgetUsage.toFixed(1)}%`}
-                />
+                <ListItemText primary="Budget Usage" secondary={`${budgetUsage.toFixed(1)}%`} />
               </ListItem>
             </List>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSaveDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSaveBuild} 
-            color="primary" 
+          <Button onClick={() => setSaveDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleSaveBuild}
+            color="primary"
             variant="contained"
             startIcon={<SaveIcon />}
           >

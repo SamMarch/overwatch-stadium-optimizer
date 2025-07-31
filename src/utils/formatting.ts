@@ -50,7 +50,7 @@ export function getStatDisplayName(statType: keyof StadiumStats): string {
     weaponLifesteal: 'Weapon Lifesteal',
     criticalDamage: 'Critical Damage',
   };
-  
+
   return displayNames[statType] || statType;
 }
 
@@ -114,11 +114,7 @@ export function formatEfficiency(efficiency: number): string {
   return efficiency.toFixed(3);
 }
 
-export function formatBuildSummary(
-  itemCount: number,
-  totalCost: number,
-  budget: number
-): string {
+export function formatBuildSummary(itemCount: number, totalCost: number, budget: number): string {
   const budgetUsed = ((totalCost / budget) * 100).toFixed(1);
   return `${itemCount}/6 items • ${formatCurrencyWithSymbol(totalCost)} (${budgetUsed}% of budget)`;
 }
@@ -126,41 +122,41 @@ export function formatBuildSummary(
 export function formatTimeAgo(date: Date): string {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
+
   if (diffInSeconds < 60) {
     return 'Just now';
   }
-  
+
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
     return `${diffInMinutes}m ago`;
   }
-  
+
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) {
     return `${diffInHours}h ago`;
   }
-  
+
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) {
     return `${diffInDays}d ago`;
   }
-  
+
   const diffInWeeks = Math.floor(diffInDays / 7);
   if (diffInWeeks < 4) {
     return `${diffInWeeks}w ago`;
   }
-  
+
   return date.toLocaleDateString();
 }
 
 export function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   if (bytes === 0) return '0 Bytes';
-  
+
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   const size = bytes / Math.pow(1024, i);
-  
+
   return `${size.toFixed(1)} ${sizes[i]}`;
 }
 
@@ -171,7 +167,7 @@ export function truncateText(text: string, maxLength: number): string {
 
 export function formatStatsList(stats: StadiumStats): string[] {
   const formatted: string[] = [];
-  
+
   for (const [key, value] of Object.entries(stats)) {
     if (value && value > 0) {
       const statKey = key as keyof StadiumStats;
@@ -180,7 +176,7 @@ export function formatStatsList(stats: StadiumStats): string[] {
       formatted.push(`${displayName}: ${formattedValue}`);
     }
   }
-  
+
   return formatted;
 }
 
@@ -188,6 +184,6 @@ export function getItemTooltip(cost: number, rarity: ItemRarity, category: ItemC
   const rarityName = getRarityDisplayName(rarity);
   const categoryName = getCategoryDisplayName(category);
   const formattedCost = formatCurrencyWithSymbol(cost);
-  
+
   return `${rarityName} ${categoryName} • ${formattedCost}`;
 }

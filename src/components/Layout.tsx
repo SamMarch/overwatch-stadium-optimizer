@@ -19,13 +19,9 @@ export default function Layout({ children }: LayoutProps) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Stadium Optimizer
           </Typography>
-          
+
           <Box sx={{ display: 'flex' }}>
-            <IconButton
-              color={isActive('/') ? 'secondary' : 'inherit'}
-              component={Link}
-              to="/"
-            >
+            <IconButton color={isActive('/') ? 'secondary' : 'inherit'} component={Link} to="/">
               <Home />
             </IconButton>
             <IconButton
@@ -45,10 +41,8 @@ export default function Layout({ children }: LayoutProps) {
           </Box>
         </Toolbar>
       </AppBar>
-      
-      <main>
-        {children}
-      </main>
+
+      <main>{children}</main>
     </Box>
   );
 }

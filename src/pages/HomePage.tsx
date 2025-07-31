@@ -24,12 +24,7 @@ export default function HomePage() {
             <Typography variant="body2" color="text.secondary" mb={2}>
               Create and optimize your stadium builds with our advanced algorithms
             </Typography>
-            <Button
-              component={Link}
-              to="/optimizer"
-              variant="contained"
-              fullWidth
-            >
+            <Button component={Link} to="/optimizer" variant="contained" fullWidth>
               Start Optimizing
             </Button>
           </CardContent>
@@ -44,12 +39,7 @@ export default function HomePage() {
             <Typography variant="body2" color="text.secondary" mb={2}>
               View and manage your current stadium build and inventory
             </Typography>
-            <Button
-              component={Link}
-              to="/inventory"
-              variant="outlined"
-              fullWidth
-            >
+            <Button component={Link} to="/inventory" variant="outlined" fullWidth>
               View Build
             </Button>
           </CardContent>

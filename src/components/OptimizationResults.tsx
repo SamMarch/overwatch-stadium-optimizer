@@ -16,7 +16,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Card,
-  CardContent
+  CardContent,
 } from '@mui/material';
 import {
   CheckCircle as CheckCircleIcon,
@@ -25,15 +25,15 @@ import {
   Assignment as AssignmentIcon,
   ExpandMore as ExpandMoreIcon,
   ContentCopy as ContentCopyIcon,
-  Compare as CompareIcon
+  Compare as CompareIcon,
 } from '@mui/icons-material';
-import type { OptimizationResult, StadiumItem } from '@/types/stadium';
+import type { OptimizationResult, StadiumItem, StadiumStats } from '@/types/stadium';
 import ItemCard from './ItemCard';
-import { 
+import {
   formatCurrencyWithSymbol,
   formatStatsList,
   getStatDisplayName,
-  formatPercentage
+  formatPercentage,
 } from '@/utils/formatting';
 
 interface OptimizationResultsProps {
@@ -43,11 +43,11 @@ interface OptimizationResultsProps {
   isLoading?: boolean;
 }
 
-export default function OptimizationResults({ 
-  result, 
-  onApplyBuild, 
+export default function OptimizationResults({
+  result,
+  onApplyBuild,
   onAddItem,
-  isLoading = false 
+  isLoading = false,
 }: OptimizationResultsProps) {
   const [showAlternative, setShowAlternative] = useState(false);
   const [copiedMessage, setCopiedMessage] = useState('');
@@ -55,7 +55,11 @@ export default function OptimizationResults({
   if (isLoading) {
     return (
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
           <SpeedIcon color="primary" />
           Optimizing Build...
         </Typography>
@@ -84,14 +88,16 @@ export default function OptimizationResults({
   };
 
   const handleCopyBuild = async () => {
-    const buildText = result.recommendedItems.map(item => `${item.name} (${formatCurrencyWithSymbol(item.cost)})`).join('\n');
+    const buildText = result.recommendedItems
+      .map(item => `${item.name} (${formatCurrencyWithSymbol(item.cost)})`)
+      .join('\n');
     const fullText = `Overwatch Stadium Build - ${formatCurrencyWithSymbol(result.totalCost)}\n\n${buildText}\n\nEfficiency: ${result.efficiency.toFixed(2)}`;
-    
+
     try {
       await navigator.clipboard.writeText(fullText);
       setCopiedMessage('Build copied to clipboard!');
       setTimeout(() => setCopiedMessage(''), 3000);
-    } catch (err) {
+    } catch {
       setCopiedMessage('Copy failed');
       setTimeout(() => setCopiedMessage(''), 3000);
     }
@@ -117,7 +123,11 @@ export default function OptimizationResults({
       <Paper sx={{ p: 3, mb: 2 }}>
         <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
           <Box>
-            <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+            >
               <CheckCircleIcon color="success" />
               Optimization Complete
             </Typography>
@@ -130,7 +140,7 @@ export default function OptimizationResults({
             <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>
               {formatCurrencyWithSymbol(result.totalCost)}
             </Typography>
-            <Chip 
+            <Chip
               label={`${getEfficiencyLabel(result.efficiency)} Efficiency`}
               color={getEfficiencyColor(result.efficiency)}
               sx={{ mt: 1 }}
@@ -201,11 +211,7 @@ export default function OptimizationResults({
           >
             Apply This Build
           </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ContentCopyIcon />}
-            onClick={handleCopyBuild}
-          >
+          <Button variant="outlined" startIcon={<ContentCopyIcon />} onClick={handleCopyBuild}>
             Copy Build
           </Button>
           {result.alternativeBuild && (
@@ -228,15 +234,19 @@ export default function OptimizationResults({
 
       {/* Recommended Items */}
       <Paper sx={{ p: 3, mb: 2 }}>
-        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
           <TrendingUpIcon color="primary" />
           Recommended Items
         </Typography>
-        
+
         <Grid container spacing={2}>
-          {result.recommendedItems.map((item) => (
+          {result.recommendedItems.map(item => (
             <Grid item xs={12} sm={6} md={4} key={item.id}>
-              <ItemCard 
+              <ItemCard
                 item={item}
                 onAdd={onAddItem}
                 compact
@@ -253,30 +263,34 @@ export default function OptimizationResults({
         <Typography variant="h6" gutterBottom>
           Target Stats Coverage
         </Typography>
-        
+
         <Grid container spacing={2}>
           {Object.entries(result.statCoverage).map(([statKey, coverage]) => (
             <Grid item xs={12} sm={6} md={4} key={statKey}>
               <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                   <Typography variant="subtitle2">
-                    {getStatDisplayName(statKey as any)}
+                    {getStatDisplayName(statKey as keyof StadiumStats)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {coverage.achieved}/{coverage.target}
                   </Typography>
                 </Box>
-                <LinearProgress 
-                  variant="determinate" 
+                <LinearProgress
+                  variant="determinate"
                   value={Math.min(coverage.percentage, 100)}
-                  sx={{ 
-                    height: 8, 
+                  sx={{
+                    height: 8,
                     borderRadius: 4,
                     backgroundColor: 'action.hover',
                     '& .MuiLinearProgress-bar': {
-                      backgroundColor: coverage.percentage >= 100 ? 'success.main' : 
-                                    coverage.percentage >= 75 ? 'warning.main' : 'error.main'
-                    }
+                      backgroundColor:
+                        coverage.percentage >= 100
+                          ? 'success.main'
+                          : coverage.percentage >= 75
+                            ? 'warning.main'
+                            : 'error.main',
+                    },
                   }}
                 />
                 <Typography variant="caption" color="text.secondary">
@@ -291,9 +305,7 @@ export default function OptimizationResults({
       {/* Optimization Reasoning */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">
-            Why These Items? (AI Reasoning)
-          </Typography>
+          <Typography variant="h6">Why These Items? (AI Reasoning)</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
@@ -315,7 +327,7 @@ export default function OptimizationResults({
           <Typography variant="h6" gutterBottom>
             Alternative Build - {result.alternativeBuild.reason}
           </Typography>
-          
+
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
             <Typography variant="h6" color="secondary">
               {formatCurrencyWithSymbol(result.alternativeBuild.cost)}
@@ -330,14 +342,9 @@ export default function OptimizationResults({
           </Box>
 
           <Grid container spacing={2}>
-            {result.alternativeBuild.items.map((item) => (
+            {result.alternativeBuild.items.map(item => (
               <Grid item xs={12} sm={6} md={4} key={item.id}>
-                <ItemCard 
-                  item={item}
-                  onAdd={onAddItem}
-                  compact
-                  showAddButton={!!onAddItem}
-                />
+                <ItemCard item={item} onAdd={onAddItem} compact showAddButton={!!onAddItem} />
               </Grid>
             ))}
           </Grid>
@@ -348,13 +355,7 @@ export default function OptimizationResults({
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={0.5}>
               {formatStatsList(result.alternativeBuild.stats).map((stat, index) => (
-                <Chip 
-                  key={index}
-                  label={stat}
-                  size="small"
-                  variant="outlined"
-                  color="secondary"
-                />
+                <Chip key={index} label={stat} size="small" variant="outlined" color="secondary" />
               ))}
             </Box>
           </Box>

@@ -12,9 +12,12 @@ export default function OptimizerPage() {
   const [currentBuild, setCurrentBuild] = useState<StadiumItem[]>([]);
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
-  
+
   // UI state
-  const [notification, setNotification] = useState<{ message: string; severity: 'success' | 'error' | 'info' } | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    severity: 'success' | 'error' | 'info';
+  } | null>(null);
 
   // Load saved build on mount
   useEffect(() => {
@@ -28,104 +31,122 @@ export default function OptimizerPage() {
     }
   }, []);
 
-  const showNotification = useCallback((message: string, severity: 'success' | 'error' | 'info' = 'info') => {
-    setNotification({ message, severity });
-  }, []);
+  const showNotification = useCallback(
+    (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
+      setNotification({ message, severity });
+    },
+    []
+  );
 
-  const handleOptimizationResult = useCallback((result: OptimizationResult) => {
-    setOptimizationResult(result);
-    setIsOptimizing(false);
-    showNotification(
-      `Found optimal build with ${result.recommendedItems.length} items (${result.executionTime?.toFixed(0)}ms)`,
-      'success'
-    );
-  }, [showNotification]);
+  const handleOptimizationResult = useCallback(
+    (result: OptimizationResult) => {
+      setOptimizationResult(result);
+      setIsOptimizing(false);
+      showNotification(
+        `Found optimal build with ${result.recommendedItems.length} items (${result.executionTime?.toFixed(0)}ms)`,
+        'success'
+      );
+    },
+    [showNotification]
+  );
 
-  const handleApplyBuild = useCallback((items: StadiumItem[]) => {
-    setCurrentBuild(items);
-    
-    // Save to localStorage
-    const build = createEmptyBuild('Applied Build', 100000);
-    const updatedBuild = { ...build, currentItems: items };
-    saveCurrentBuild(updatedBuild);
-    
-    showNotification(`Applied build with ${items.length} items`, 'success');
-  }, [showNotification]);
+  const handleApplyBuild = useCallback(
+    (items: StadiumItem[]) => {
+      setCurrentBuild(items);
 
-  const handleAddItem = useCallback((item: StadiumItem) => {
-    if (currentBuild.length >= 6) {
-      showNotification('Cannot add more than 6 items to a build', 'error');
-      return;
-    }
+      // Save to localStorage
+      const build = createEmptyBuild('Applied Build', 100000);
+      const updatedBuild = { ...build, currentItems: items };
+      saveCurrentBuild(updatedBuild);
 
-    if (currentBuild.some(buildItem => buildItem.id === item.id)) {
-      showNotification('Item is already in your build', 'error');
-      return;
-    }
+      showNotification(`Applied build with ${items.length} items`, 'success');
+    },
+    [showNotification]
+  );
 
-    const newBuild = [...currentBuild, item];
-    setCurrentBuild(newBuild);
-    
-    // Save to localStorage
-    const build = createEmptyBuild('Current Build', 100000);
-    const updatedBuild = { ...build, currentItems: newBuild };
-    saveCurrentBuild(updatedBuild);
-    
-    showNotification(`Added ${item.name} to build`, 'success');
-  }, [currentBuild, showNotification]);
+  const handleAddItem = useCallback(
+    (item: StadiumItem) => {
+      if (currentBuild.length >= 6) {
+        showNotification('Cannot add more than 6 items to a build', 'error');
+        return;
+      }
 
-  const handleRemoveItem = useCallback((item: StadiumItem) => {
-    const newBuild = currentBuild.filter(buildItem => buildItem.id !== item.id);
-    setCurrentBuild(newBuild);
-    
-    // Save to localStorage
-    const build = createEmptyBuild('Current Build', 100000);
-    const updatedBuild = { ...build, currentItems: newBuild };
-    saveCurrentBuild(updatedBuild);
-    
-    showNotification(`Removed ${item.name} from build`, 'info');
-  }, [currentBuild, showNotification]);
+      if (currentBuild.some(buildItem => buildItem.id === item.id)) {
+        showNotification('Item is already in your build', 'error');
+        return;
+      }
+
+      const newBuild = [...currentBuild, item];
+      setCurrentBuild(newBuild);
+
+      // Save to localStorage
+      const build = createEmptyBuild('Current Build', 100000);
+      const updatedBuild = { ...build, currentItems: newBuild };
+      saveCurrentBuild(updatedBuild);
+
+      showNotification(`Added ${item.name} to build`, 'success');
+    },
+    [currentBuild, showNotification]
+  );
+
+  const handleRemoveItem = useCallback(
+    (item: StadiumItem) => {
+      const newBuild = currentBuild.filter(buildItem => buildItem.id !== item.id);
+      setCurrentBuild(newBuild);
+
+      // Save to localStorage
+      const build = createEmptyBuild('Current Build', 100000);
+      const updatedBuild = { ...build, currentItems: newBuild };
+      saveCurrentBuild(updatedBuild);
+
+      showNotification(`Removed ${item.name} from build`, 'info');
+    },
+    [currentBuild, showNotification]
+  );
 
   const handleClearBuild = useCallback(() => {
     setCurrentBuild([]);
-    
+
     // Clear from localStorage
     const build = createEmptyBuild('Current Build', 100000);
     saveCurrentBuild(build);
-    
+
     showNotification('Build cleared', 'info');
   }, [showNotification]);
 
-  const handleSaveBuild = useCallback((items: StadiumItem[]) => {
-    try {
-      const build = createEmptyBuild(`Stadium Build ${new Date().toLocaleDateString()}`, 100000);
-      const buildToSave = { ...build, currentItems: items };
-      
-      saveBuild(buildToSave, buildToSave.name, ['optimizer', 'custom']);
-      showNotification('Build saved successfully!', 'success');
-    } catch (error) {
-      showNotification('Failed to save build', 'error');
-    }
-  }, [showNotification]);
+  const handleSaveBuild = useCallback(
+    (items: StadiumItem[]) => {
+      try {
+        const build = createEmptyBuild(`Stadium Build ${new Date().toLocaleDateString()}`, 100000);
+        const buildToSave = { ...build, currentItems: items };
+
+        saveBuild(buildToSave, buildToSave.name, ['optimizer', 'custom']);
+        showNotification('Build saved successfully!', 'success');
+      } catch {
+        showNotification('Failed to save build', 'error');
+      }
+    },
+    [showNotification]
+  );
 
   return (
     <Container maxWidth="xl" sx={{ py: 2 }}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
         Stadium Build Optimizer
       </Typography>
-      
+
       <Grid container spacing={3}>
         {/* Left Column - Optimization Form and Results */}
         <Grid item xs={12} lg={8}>
           <Box display="flex" flexDirection="column" gap={3}>
             {/* Optimization Form */}
-            <OptimizationForm 
+            <OptimizationForm
               onOptimizationResult={handleOptimizationResult}
               isOptimizing={isOptimizing}
             />
-            
+
             {/* Optimization Results */}
-            <OptimizationResults 
+            <OptimizationResults
               result={optimizationResult}
               onApplyBuild={handleApplyBuild}
               onAddItem={handleAddItem}
@@ -137,7 +158,7 @@ export default function OptimizerPage() {
         {/* Right Column - Current Build Summary */}
         <Grid item xs={12} lg={4}>
           <Box position="sticky" top={20}>
-            <BuildSummary 
+            <BuildSummary
               currentBuild={currentBuild}
               budget={100000} // Default budget, could be made dynamic
               maxItems={6}
@@ -158,8 +179,8 @@ export default function OptimizerPage() {
           onClose={() => setNotification(null)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert 
-            onClose={() => setNotification(null)} 
+          <Alert
+            onClose={() => setNotification(null)}
             severity={notification.severity}
             variant="filled"
           >

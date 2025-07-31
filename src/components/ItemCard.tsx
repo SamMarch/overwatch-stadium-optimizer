@@ -12,7 +12,7 @@ import {
   ListItemText,
   Collapse,
   Badge,
-  Button
+  Button,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -20,16 +20,16 @@ import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   Star as StarIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
 } from '@mui/icons-material';
 import type { StadiumItem } from '@/types/stadium';
-import { 
+import {
   formatCurrencyWithSymbol,
   getRarityColor,
   getRarityDisplayName,
   getCategoryColor,
   getCategoryDisplayName,
-  formatStatsList
+  formatStatsList,
 } from '@/utils/formatting';
 
 interface ItemCardProps {
@@ -55,7 +55,7 @@ export default function ItemCard({
   showRemoveButton = false,
   compact = false,
   efficiency,
-  highlighted = false
+  highlighted = false,
 }: ItemCardProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -77,8 +77,8 @@ export default function ItemCard({
 
   if (compact) {
     return (
-      <Card 
-        sx={{ 
+      <Card
+        sx={{
           minWidth: 200,
           border: highlighted ? '2px solid' : '1px solid',
           borderColor: highlighted ? 'primary.main' : 'divider',
@@ -86,8 +86,8 @@ export default function ItemCard({
           '&:hover': {
             backgroundColor: 'action.hover',
             transform: 'translateY(-2px)',
-            transition: 'all 0.2s ease-in-out'
-          }
+            transition: 'all 0.2s ease-in-out',
+          },
         }}
       >
         <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -95,23 +95,21 @@ export default function ItemCard({
             <Typography variant="subtitle2" component="h3" sx={{ fontWeight: 600 }}>
               {item.name}
             </Typography>
-            {buildCount > 0 && (
-              <Badge badgeContent={buildCount} color="primary" sx={{ ml: 1 }} />
-            )}
+            {buildCount > 0 && <Badge badgeContent={buildCount} color="primary" sx={{ ml: 1 }} />}
           </Box>
-          
+
           <Box display="flex" gap={0.5} mb={1}>
-            <Chip 
+            <Chip
               label={getRarityDisplayName(item.rarity)}
               size="small"
-              sx={{ 
+              sx={{
                 backgroundColor: rarityColor + '20',
                 color: rarityColor,
                 borderColor: rarityColor,
-                border: '1px solid'
+                border: '1px solid',
               }}
             />
-            <Chip 
+            <Chip
               label={getCategoryDisplayName(item.category)}
               size="small"
               sx={{ backgroundColor: categoryColor + '20', color: categoryColor }}
@@ -131,20 +129,12 @@ export default function ItemCard({
           {(showAddButton || showRemoveButton) && (
             <Box display="flex" justifyContent="center" mt={1}>
               {showRemoveButton && isInBuild && (
-                <IconButton 
-                  onClick={handleRemoveClick}
-                  color="error"
-                  size="small"
-                >
+                <IconButton onClick={handleRemoveClick} color="error" size="small">
                   <RemoveIcon />
                 </IconButton>
               )}
               {showAddButton && !isInBuild && (
-                <IconButton 
-                  onClick={handleAddClick}
-                  color="primary"
-                  size="small"
-                >
+                <IconButton onClick={handleAddClick} color="primary" size="small">
                   <AddIcon />
                 </IconButton>
               )}
@@ -156,8 +146,8 @@ export default function ItemCard({
   }
 
   return (
-    <Card 
-      sx={{ 
+    <Card
+      sx={{
         width: '100%',
         border: highlighted ? '2px solid' : '1px solid',
         borderColor: highlighted ? 'primary.main' : 'divider',
@@ -167,8 +157,8 @@ export default function ItemCard({
           backgroundColor: 'action.hover',
           transform: 'translateY(-1px)',
           transition: 'all 0.2s ease-in-out',
-          boxShadow: 3
-        }
+          boxShadow: 3,
+        },
       }}
     >
       {/* Rarity indicator */}
@@ -179,7 +169,7 @@ export default function ItemCard({
           left: 0,
           right: 0,
           height: 4,
-          backgroundColor: rarityColor
+          backgroundColor: rarityColor,
         }}
       />
 
@@ -190,28 +180,26 @@ export default function ItemCard({
               <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>
                 {item.name}
               </Typography>
-              {buildCount > 0 && (
-                <Badge badgeContent={buildCount} color="primary" />
-              )}
+              {buildCount > 0 && <Badge badgeContent={buildCount} color="primary" />}
               {efficiency !== undefined && efficiency > 1.5 && (
                 <Tooltip title="High efficiency item">
                   <StarIcon color="warning" fontSize="small" />
                 </Tooltip>
               )}
             </Box>
-            
+
             <Box display="flex" gap={1} mb={2}>
-              <Chip 
+              <Chip
                 label={getRarityDisplayName(item.rarity)}
                 size="small"
-                sx={{ 
+                sx={{
                   backgroundColor: rarityColor + '20',
                   color: rarityColor,
                   borderColor: rarityColor,
-                  border: '1px solid'
+                  border: '1px solid',
                 }}
               />
-              <Chip 
+              <Chip
                 label={getCategoryDisplayName(item.category)}
                 size="small"
                 sx={{ backgroundColor: categoryColor + '20', color: categoryColor }}
@@ -243,13 +231,7 @@ export default function ItemCard({
             </Typography>
             <Box display="flex" flexWrap="wrap" gap={0.5}>
               {statsList.map((stat, index) => (
-                <Chip 
-                  key={index}
-                  label={stat}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                />
+                <Chip key={index} label={stat} size="small" variant="outlined" color="primary" />
               ))}
             </Box>
           </Box>
@@ -261,15 +243,15 @@ export default function ItemCard({
             <Typography variant="subtitle2" color="text.primary" sx={{ mb: 1, fontWeight: 600 }}>
               Passive Effect:
             </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                p: 1.5, 
-                backgroundColor: 'action.hover', 
+            <Typography
+              variant="body2"
+              sx={{
+                p: 1.5,
+                backgroundColor: 'action.hover',
                 borderRadius: 1,
                 fontStyle: 'italic',
                 border: '1px solid',
-                borderColor: 'divider'
+                borderColor: 'divider',
               }}
             >
               {item.passive}
@@ -281,20 +263,13 @@ export default function ItemCard({
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex" gap={1}>
             <Tooltip title="View detailed information">
-              <IconButton 
-                onClick={() => setExpanded(!expanded)}
-                size="small"
-                color="primary"
-              >
+              <IconButton onClick={() => setExpanded(!expanded)} size="small" color="primary">
                 {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Item information">
-              <IconButton 
-                size="small"
-                color="info"
-              >
+              <IconButton size="small" color="info">
                 <InfoIcon />
               </IconButton>
             </Tooltip>
@@ -334,27 +309,21 @@ export default function ItemCard({
             </Typography>
             <List dense>
               <ListItem>
-                <ListItemText 
-                  primary="Item ID" 
-                  secondary={item.id}
-                />
+                <ListItemText primary="Item ID" secondary={item.id} />
               </ListItem>
               <ListItem>
-                <ListItemText 
-                  primary="Category" 
+                <ListItemText
+                  primary="Category"
                   secondary={`${getCategoryDisplayName(item.category)} item`}
                 />
               </ListItem>
               <ListItem>
-                <ListItemText 
-                  primary="Rarity" 
-                  secondary={getRarityDisplayName(item.rarity)}
-                />
+                <ListItemText primary="Rarity" secondary={getRarityDisplayName(item.rarity)} />
               </ListItem>
               {efficiency !== undefined && (
                 <ListItem>
-                  <ListItemText 
-                    primary="Cost Efficiency" 
+                  <ListItemText
+                    primary="Cost Efficiency"
                     secondary={`${efficiency.toFixed(3)} (${efficiency > 1.5 ? 'High' : efficiency > 1.0 ? 'Good' : 'Standard'})`}
                   />
                 </ListItem>

@@ -261,10 +261,13 @@ export function getItemsByIds(ids: string[]): StadiumItem[] {
 }
 
 export function sortItemsByCost(items: StadiumItem[], ascending: boolean = true): StadiumItem[] {
-  return [...items].sort((a, b) => ascending ? a.cost - b.cost : b.cost - a.cost);
+  return [...items].sort((a, b) => (ascending ? a.cost - b.cost : b.cost - a.cost));
 }
 
-export function sortItemsByEfficiency(items: StadiumItem[], targetStat: keyof StadiumItem['stats']): StadiumItem[] {
+export function sortItemsByEfficiency(
+  items: StadiumItem[],
+  targetStat: keyof StadiumItem['stats']
+): StadiumItem[] {
   return [...items].sort((a, b) => {
     const aValue = a.stats[targetStat] || 0;
     const bValue = b.stats[targetStat] || 0;
