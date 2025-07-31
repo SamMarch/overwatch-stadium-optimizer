@@ -5,7 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/overwatch-stadium-optimizer-web/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/overwatch-stadium-optimizer/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), './src'),
