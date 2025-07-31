@@ -2,8 +2,8 @@
 
 A powerful web application for optimizing your Overwatch Stadium builds using advanced algorithms and real item data.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://your-github-username.github.io/overwatch-stadium-optimizer-web)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/your-github-username/overwatch-stadium-optimizer-web/deploy.yml)](https://github.com/your-github-username/overwatch-stadium-optimizer-web/actions)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://SamMarch.github.io/overwatch-stadium-optimizer-web)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/SamMarch/overwatch-stadium-optimizer-web/deploy.yml)](https://github.com/SamMarch/overwatch-stadium-optimizer-web/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
 [![Material-UI](https://img.shields.io/badge/Material--UI-5-blue)](https://mui.com/)
@@ -44,7 +44,7 @@ A powerful web application for optimizing your Overwatch Stadium builds using ad
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-github-username/overwatch-stadium-optimizer-web.git
+git clone https://github.com/SamMarch/overwatch-stadium-optimizer-web.git
 cd overwatch-stadium-optimizer-web
 
 # Install dependencies
